@@ -228,10 +228,10 @@ tags
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
 *.code-workspace
 
 ### VisualStudioCode Patch ###
@@ -239,3 +239,5 @@ tags
 .history
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,visualstudiocode,vim
+
+crawling/*
