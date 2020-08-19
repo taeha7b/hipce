@@ -6,3 +6,6 @@ class Store(models.Model):
     business_day = models.CharField(max_length = 50, blank = True, null = True)
     opening_hour = models.CharField(max_length = 50)
     contact      = models.CharField(max_length = 50)
+
+    class Meta:
+        db_table = 'stores'
