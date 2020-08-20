@@ -1,8 +1,8 @@
 from django.db import models
-
 from .validation import validate_account, validate_birthday, validate_email, validate_name, validate_phone
 
 class User(models.Model):
+
     account                 = models.CharField(max_length = 50, validators = [validate_account], unique = True)
     password                = models.CharField(max_length = 256)
     name                    = models.CharField(max_length = 50, validators = [validate_name])
@@ -16,6 +16,7 @@ class User(models.Model):
         db_table= 'users'
 
 class UserShippingDestination:
+    
     destination_ninkname = models.CharField(max_length = 50)
     name                 = models.CharField(max_length = 50)
     address              = models.CharField(max_length = 500)
@@ -24,4 +25,4 @@ class UserShippingDestination:
     user                 = models.ForeignKey('User', on_delete = models.CASCADE)
 
     class Meta:
-        db_table = 'userShippingDestinations'
+        db_table = 'user_shipping_destinations'

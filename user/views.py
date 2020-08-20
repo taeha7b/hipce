@@ -14,7 +14,7 @@ class SignUp(View):
         data = json.loads(request.body)
 
         try:
-
+            
             regex = re.compile(r'^(?=.*[a-zA-Z0-9])(?=.*[a-zA-Z!@#$%^&*])(?=.*[0-9!@#$%^&*]).{10,16}')
 
             if not regex.match(data['password']):
@@ -37,6 +37,9 @@ class SignUp(View):
             user.save()
 
             return JsonResponse({"message": "Success"}, status=200)
+
+        except ValidationError as e:
+            return JsonResponse({"message": e.message}, status=400)
 
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
