@@ -1,11 +1,12 @@
 from django.db import models
 
-
-from .validation import validate_account
-from .validation import validate_birthday
-from .validation import validate_email
-from .validation import validate_name
-from .validation import validate_phone
+from .validation import (
+validate_account,
+validate_birthday,
+validate_email,
+validate_name,
+validate_phone
+)
 
 class User(models.Model):
     account                 = models.CharField(max_length = 50, validators = [validate_account], unique = True)
