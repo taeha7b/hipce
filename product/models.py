@@ -1,56 +1,55 @@
 from django.db import models
 
 class Category(models.Model):
-
     name = models.CharField(max_length = 50)
 
     class Meta:
         db_table = 'categories'
 
 class Collection(models.Model):
-
     name  = models.CharField(max_length = 50)
-    image = models.CharField(max_length = 500)
-    video = models.CharField(max_length = 500)
+    image = models.URLField(max_length = 500)
+    video = models.URLField(max_length = 500)
 
     class Meta:
         db_table = 'collections'
 
 class Product(models.Model):
-
     category          = models.ForeignKey(Category, on_delete = models.CASCADE)
     name              = models.CharField(max_length = 50)
-    description_image = models.CharField(max_length = 5000)
-    price             = models.CharField(max_length = 50)
-    collection        = models.ForeignKey(Collection, on_delete = CASCADE)
+    description_image = models.URLField(max_length = 5000)
+    price             = models.DecimalField(max_digits=6, decimal_places=4)
+    collection        = models.ForeignKey(Collection, on_delete = models.CASCADE)
     stock             = models.CharField(max_length = 50)
-    tag               = models.ManyToManyField(Tag)
+    tag               = models.ManyToManyField('Tag')
 
     class Meta:
         db_table = 'products'
+        
+# class ProductTag(models.Model):
+#     product  = models.ForeignKey(Product, on_delete = models.CASCADE)
+#     tag = models.ForeignKey('Tag', on_delete = models.CASCADE)
+    
+#     class Meta:
+#         db_table = 'products_tags'
 
 
 class Color(models.Model):
-
     name    = models.CharField(max_length = 50)
     product = models.ManyToManyField(Product)
     
     class Meta: 
         db_table = 'colors'
 
-
 class Image(models.Model):
-
-    url        = models.CharField(max_length = 500)
-    image_type = models.ForeignKey(image_types, on_delete = CASCADE)
-    product    = models.ForeignKry(Product, on_delete = CASCADE)
+    url        = models.URLField(max_length = 500)
+    image_type = models.ForeignKey('ImageType', on_delete = models.CASCADE)
+    product    = models.ForeignKey(Product, on_delete = models.CASCADE)
 
     class Meta:
         db_table = 'images'
 
-
 class Tag(models.Model):
-
     new_product            = models.CharField(max_length = 500)
     discount_event_product = models.CharField(max_length = 500)
     sold_out_product       = models.CharField(max_length = 500)
@@ -59,7 +58,7 @@ class Tag(models.Model):
     class Meta:
         db_table = 'tags'
 
-class image_type(models.Model):
+class ImageType(models.Model):
     name = models.CharField(max_length = 500)
 
     class Meta:
