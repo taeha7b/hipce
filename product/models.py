@@ -15,20 +15,20 @@ class Collection(models.Model):
         db_table = 'collections'
 
 class Product(models.Model):
-    category          = models.ForeignKey(Category, on_delete = models.CASCADE)
+    category          = models.ForeignKey('Category', on_delete = models.CASCADE)
     name              = models.CharField(max_length = 50)
     description_image = models.URLField(max_length = 5000)
     price             = models.DecimalField(max_digits = 6, decimal_places = 4)
-    collection        = models.ForeignKey(Collection, on_delete = models.CASCADE)
+    collection        = models.ForeignKey('Collection', on_delete = models.CASCADE)
     stock             = models.CharField(max_length = 50)
     tag               = models.ManyToManyField('Tag', through = ProductTag)
-    color             = models.ManyToManyField(Color, through = ProductColor)
+    color             = models.ManyToManyField('Color', through = ProductColor)
 
     class Meta:
         db_table = 'products'
         
 class ProductTag(models.Model):
-    product = models.ForeignKey(Product, on_delete = models.CASCADE)
+    product = models.ForeignKey('Product', on_delete = models.CASCADE)
     tag     = models.ForeignKey('Tag', on_delete = models.CASCADE)
     
     class Meta:
@@ -44,8 +44,8 @@ class Tag(models.Model):
         db_table = 'tags'
 
 class ProductColor(models.Model):
-    product = modles.ForeignKey(Product, on_delete = models.CASCADE)
-    color   = models.ForeignKey(Color, on_delete = models.CASCADE)
+    product = modles.ForeignKey('Product', on_delete = models.CASCADE)
+    color   = models.ForeignKey('Color', on_delete = models.CASCADE)
 
     class Meta:
         db_table = 'products_colors'
@@ -59,7 +59,7 @@ class Color(models.Model):
 class Image(models.Model):
     url        = models.URLField(max_length = 500)
     image_type = models.ForeignKey('ImageType', on_delete = models.CASCADE)
-    product    = models.ForeignKey(Product, on_delete = models.CASCADE)
+    product    = models.ForeignKey('Product', on_delete = models.CASCADE)
 
     class Meta:
         db_table = 'images'
