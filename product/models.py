@@ -18,24 +18,40 @@ class Product(models.Model):
     category          = models.ForeignKey(Category, on_delete = models.CASCADE)
     name              = models.CharField(max_length = 50)
     description_image = models.URLField(max_length = 5000)
-    price             = models.DecimalField(max_digits=6, decimal_places=4)
+    price             = models.DecimalField(max_digits = 6, decimal_places = 4)
     collection        = models.ForeignKey(Collection, on_delete = models.CASCADE)
     stock             = models.CharField(max_length = 50)
-    tag               = models.ManyToManyField('Tag', through = 'ProductTag')
+    tag               = models.ManyToManyField('Tag', through = ProductTag)
+    color             = models.ManyToManyField(Color, through = ProductColor)
 
     class Meta:
         db_table = 'products'
         
 class ProductTag(models.Model):
-    product  = models.ForeignKey(Product, on_delete = models.CASCADE)
-    tag = models.ForeignKey('Tag', on_delete = models.CASCADE)
+    product = models.ForeignKey(Product, on_delete = models.CASCADE)
+    tag     = models.ForeignKey('Tag', on_delete = models.CASCADE)
     
     class Meta:
         db_table = 'products_tags'
 
+class Tag(models.Model):
+    new_product            = models.CharField(max_length = 500)
+    discount_event_product = models.CharField(max_length = 500)
+    sold_out_product       = models.CharField(max_length = 500)
+    limited_product        = models.CharField(max_length = 500)
+
+    class Meta:
+        db_table = 'tags'
+
+class ProductColor(models.Model):
+    product = modles.ForeignKey(Product, on_delete = models.CASCADE)
+    color   = models.ForeignKey(Color, on_delete = models.CASCADE)
+
+    class Meta:
+        db_table = 'products_colors'
+
 class Color(models.Model):
     name    = models.CharField(max_length = 50)
-    product = models.ManyToManyField(Product)
     
     class Meta: 
         db_table = 'colors'
@@ -47,15 +63,6 @@ class Image(models.Model):
 
     class Meta:
         db_table = 'images'
-
-class Tag(models.Model):
-    new_product            = models.CharField(max_length = 500)
-    discount_event_product = models.CharField(max_length = 500)
-    sold_out_product       = models.CharField(max_length = 500)
-    limited_product        = models.CharField(max_length = 500)
-
-    class Meta:
-        db_table = 'tags'
 
 class ImageType(models.Model):
     name = models.CharField(max_length = 500)
