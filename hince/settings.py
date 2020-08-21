@@ -4,7 +4,7 @@ from local_settings import DATABASES, SECRET
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-DEBUG = False
+DEBUG = True
 
 SECRET_KEY = SECRET
 
