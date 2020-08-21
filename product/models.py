@@ -21,8 +21,8 @@ class Product(models.Model):
     price             = models.DecimalField(max_digits = 6, decimal_places = 4)
     collection        = models.ForeignKey('Collection', on_delete = models.CASCADE)
     stock             = models.CharField(max_length = 50)
-    tag               = models.ManyToManyField('Tag', through = ProductTag)
-    color             = models.ManyToManyField('Color', through = ProductColor)
+    tag               = models.ManyToManyField('Tag', through = 'ProductTag')
+    color             = models.ManyToManyField('Color', through = 'ProductColor')
 
     class Meta:
         db_table = 'products'
