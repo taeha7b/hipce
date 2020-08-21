@@ -1,5 +1,6 @@
 from django.db import models
 
+
 from .validation import validate_account
 from .validation import validate_birthday
 from .validation import validate_email
@@ -19,6 +20,7 @@ class User(models.Model):
     class Meta:
         db_table= 'users'
 
+
 class ShippingDestination:
     destination_ninkname = models.CharField(max_length = 50)
     name                 = models.CharField(max_length = 50)
@@ -29,3 +31,4 @@ class ShippingDestination:
 
     class Meta:
         db_table = 'shipping_destinations'
+

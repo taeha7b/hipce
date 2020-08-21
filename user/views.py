@@ -30,6 +30,6 @@ class SignUp(View):
             user.full_clean()
             user.save()
             return JsonResponse({"MESSAGE": "SUCCESS"}, status=200)
-        
+            
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=400)
