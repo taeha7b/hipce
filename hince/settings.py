@@ -2,7 +2,7 @@ from pathlib import Path
 
 from local_settings import DATABASES, SECRET
 
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+BASE_DIR = Path(__file__).resolve(strict = True).parent.parent
 
 DEBUG = True
 
@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'user.apps.UserConfig',
+    
 ]
 
 MIDDLEWARE = [
