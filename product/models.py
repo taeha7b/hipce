@@ -44,7 +44,7 @@ class Tag(models.Model):
         db_table = 'tags'
 
 class ProductColor(models.Model):
-    product = modles.ForeignKey('Product', on_delete = models.CASCADE)
+    product = models.ForeignKey('Product', on_delete = models.CASCADE)
     color   = models.ForeignKey('Color', on_delete = models.CASCADE)
 
     class Meta:
