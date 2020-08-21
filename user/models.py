@@ -1,11 +1,11 @@
 from django.db import models
 
 from .validation import (
-validate_account,
-validate_birthday,
-validate_email,
-validate_name,
-validate_phone
+    validate_account,
+    validate_birthday,
+    validate_email,
+    validate_name,
+    validate_phone
 )
 
 class User(models.Model):
