@@ -35,7 +35,6 @@ class SignUp(View):
 
 class SignIn(View):
     def post(self, request): 
-        
         try:  
             data = json.loads(request.body)
             if data['password']=="":
@@ -49,5 +48,6 @@ class SignIn(View):
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
