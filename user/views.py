@@ -5,7 +5,7 @@ from django.http     import JsonResponse
 
 from .models         import User
 from .validation     import ValidationError
-from hince.settings  import SECRET_KEY
+from token_function  import make_token
 
 class SignUp(View):
     def post(self, request):
@@ -35,21 +35,19 @@ class SignUp(View):
 
 class SignIn(View):
     def post(self, request): 
-        data = json.loads(request.body)
+        
         try:  
-            if data['account']=="":
-                return JsonResponse({"MESSAGE": "Please enter your account"})
-
+            data = json.loads(request.body)
             if data['password']=="":
                 return JsonResponse({"MESSAGE": "Please enter your password"})
 
-            if User.objects.filter(account = data['account']):
-                if bcrypt.checkpw(data['password'].encode('utf-8'), User.objects.get(account = data['account']).password.encode('utf-8')):
-                    access_token = jwt.encode({'account' : data['account']}, SECRET_KEY['secret'], algorithm = 'HS256').decode('utf-8')
-                    return JsonResponse({"TOKEN": access_token}, status = 200)
-            
+            if User.objects.filter(account = data['account']).exists():
+                return make_token(data['account'], data['password'])
+
             else:
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
