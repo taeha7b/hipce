@@ -37,15 +37,15 @@ class SignIn(View):
     def post(self, request): 
         data = json.loads(request.body)
         try:  
-            if data['email']=="":
-                return JsonResponse({"MESSAGE": "Please enter your email"})
+            if data['account']=="":
+                return JsonResponse({"MESSAGE": "Please enter your account"})
 
             if data['password']=="":
                 return JsonResponse({"MESSAGE": "Please enter your password"})
 
             if User.objects.filter(account = data['account']):
                 if bcrypt.checkpw(data['password'].encode('utf-8'), User.objects.get(account = data['account']).password.encode('utf-8')):
-                    access_token = jwt.encode({'account' : data['account']}, SECRET_KEY, algorithm = 'HS256').decode('utf-8')
+                    access_token = jwt.encode({'account' : data['account']}, SECRET_KEY['secret'], algorithm = 'HS256').decode('utf-8')
                     return JsonResponse({"TOKEN": access_token}, status = 200)
             
             else:
