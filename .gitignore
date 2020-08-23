@@ -243,3 +243,6 @@ tags
 collection/
 review/
 store (crawling)/
+shop (crawling)/
+shop/
+db_save_*
