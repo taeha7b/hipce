@@ -40,12 +40,12 @@ class SignIn(View):
             if data['password']=="":
                 return JsonResponse({"MESSAGE": "Please enter your password"})
 
+            
             if User.objects.filter(account = data['account']).exists():
-                if bcrypt.checkpw(data['password'].encode('utf-8'), User.objects.get(account = data['account']).password.encode('utf-8')):
-                    access_token = jwt.encode({'ID' : User.objects.get(account = data['account']).id}, SECRET['secret'], ALGORITHM['algorithm']).decode('utf-8')
-                return JsonResponse({"TOKEN": access_token}, status = 200)
-
-            else:
+                user=User.objects.get(account = data['account'])
+                if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
+                    access_token = jwt.encode({'ID' : user.id}, SECRET['secret'], ALGORITHM['algorithm']).decode('utf-8')
+                    return JsonResponse({"TOKEN": access_token}, status = 200)
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)
 
         except KeyError:
