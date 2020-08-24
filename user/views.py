@@ -5,12 +5,12 @@ from django.http     import JsonResponse
 
 from .models         import User
 from .validation     import ValidationError
-from hince.settings  import SECRET_KEY
+from local_settings  import SECRET, ALGORITHM
 
 class SignUp(View):
     def post(self, request):
-        data = json.loads(request.body)
         try:
+            data = json.loads(request.body)
             regex = re.compile(r'^(?=.*[a-zA-Z0-9])(?=.*[a-zA-Z!@#$%^&*])(?=.*[0-9!@#$%^&*]).{10,16}')
             if not regex.match(data['password']):
                 return JsonResponse({"MESSAGE": "RIGHT PASSWORD REQUIRED"}, status = 400)
@@ -32,3 +32,23 @@ class SignUp(View):
             
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+
+class SignIn(View):
+    def post(self, request): 
+        try:  
+            data = json.loads(request.body)
+            if data['password']=="":
+                return JsonResponse({"MESSAGE": "Please enter your password"})
+
+            if User.objects.filter(account = data['account']).exists():
+                user = User.objects.get(account = data['account'])
+                if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
+                    access_token = jwt.encode({'ID' : user.id}, SECRET['secret'], ALGORITHM['algorithm']).decode('utf-8')
+                    return JsonResponse({"TOKEN": access_token}, status = 200)
+                return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)
+
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
