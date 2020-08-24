@@ -5,7 +5,7 @@ from django.http     import JsonResponse
 
 from .models         import User
 from .validation     import ValidationError
-from token_function  import make_token
+from local_settings  import SECRET, ALGORITHM
 
 class SignUp(View):
     def post(self, request):
@@ -41,7 +41,9 @@ class SignIn(View):
                 return JsonResponse({"MESSAGE": "Please enter your password"})
 
             if User.objects.filter(account = data['account']).exists():
-                return make_token(data['account'], data['password'])
+                if bcrypt.checkpw(data['password'].encode('utf-8'), User.objects.get(account = data['account']).password.encode('utf-8')):
+                    access_token = jwt.encode({'ID' : User.objects.get(account = data['account']).id}, SECRET['secret'], ALGORITHM['algorithm']).decode('utf-8')
+                return JsonResponse({"TOKEN": access_token}, status = 200)
 
             else:
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)

@@ -241,5 +241,4 @@ tags
 # End of https://www.toptal.com/developers/gitignore/api/django,python,visualstudiocode,vim
 
 crawling/*
-
-token_function*
+*_save.py
