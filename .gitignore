@@ -240,9 +240,5 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,visualstudiocode,vim
 
-collection/
-review/
-store(crawling)/
-shop(crawling)/
-shop/
-db_save_*
+crawling/*
+db_save/*
