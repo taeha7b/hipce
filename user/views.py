@@ -41,7 +41,7 @@ class SignIn(View):
                 return JsonResponse({"MESSAGE": "Please enter your password"})
 
             if User.objects.filter(account = data['account']).exists():
-                user=User.objects.get(account = data['account'])
+                user = User.objects.get(account = data['account'])
                 if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
                     access_token = jwt.encode({'ID' : user.id}, SECRET['secret'], ALGORITHM['algorithm']).decode('utf-8')
                     return JsonResponse({"TOKEN": access_token}, status = 200)
