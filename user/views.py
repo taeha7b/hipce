@@ -9,8 +9,8 @@ from local_settings  import SECRET, ALGORITHM
 
 class SignUp(View):
     def post(self, request):
-        data = json.loads(request.body)
         try:
+            data = json.loads(request.body)
             regex = re.compile(r'^(?=.*[a-zA-Z0-9])(?=.*[a-zA-Z!@#$%^&*])(?=.*[0-9!@#$%^&*]).{10,16}')
             if not regex.match(data['password']):
                 return JsonResponse({"MESSAGE": "RIGHT PASSWORD REQUIRED"}, status = 400)
