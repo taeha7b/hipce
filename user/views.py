@@ -40,7 +40,6 @@ class SignIn(View):
             if data['password']=="":
                 return JsonResponse({"MESSAGE": "Please enter your password"})
 
-            
             if User.objects.filter(account = data['account']).exists():
                 user=User.objects.get(account = data['account'])
                 if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
