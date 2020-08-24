@@ -17,7 +17,7 @@ class User(models.Model):
     is_email_maketing_agree = models.BooleanField(default = False, blank = True)
     
     class Meta:
-        db_table= 'users'
+        db_table = 'users'
 
 class ShippingDestination:
     destination_ninkname = models.CharField(max_length = 50)
