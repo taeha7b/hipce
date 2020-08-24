@@ -20,13 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-<<<<<<< HEAD
     'user.apps.UserConfig',  
-=======
     'product.apps.ProductConfig',
-    'user.apps.UserConfig',
-    
->>>>>>> master
 ]
 
 MIDDLEWARE = [
