@@ -20,7 +20,7 @@ class Product(models.Model):
     description_image = models.URLField(max_length = 5000)
     price             = models.DecimalField(max_digits = 6, decimal_places = 4)
     collection        = models.ForeignKey('Collection', on_delete = models.CASCADE)
-    stock             = models.CharField(max_length = 50)
+    stock             = models.IntegerField(default=0)
     tag               = models.ManyToManyField('Tag', through = 'ProductTag')
     color             = models.ManyToManyField('Color', through = 'ProductColor')
 
