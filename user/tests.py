@@ -2,8 +2,6 @@ import json
 
 from django.test  import TestCase, Client
 
-from.models       import User
-
 client = Client()
 
 class JustTest(TestCase):
@@ -13,9 +11,9 @@ class JustTest(TestCase):
                'account'               :'testid127',
                'password'              :'testPsswoed1!',
                'name'                  :'김태하',
-               'phone'                 :'010-2997-6673',
+               'phone'                 :'010-1234-5678',
                'email'                 :'test@test.com',
-               'birthday'              :'19921104',
+               'birthday'              :'1992-11-04',
                'sms_marketing_agree'   :'False',
                'email_marketing_agree' :'False'
         }
@@ -23,8 +21,5 @@ class JustTest(TestCase):
         response = client.post('/user/signup', json.dumps(data), content_type = 'application/json') 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {
-           "message": 'Success'
+           'MESSAGE': 'SUCCESS'
         })
-
-if __name__ == '__main__':
-    unittest.main()
