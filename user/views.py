@@ -3,7 +3,7 @@ import bcrypt, json, jwt, re
 from django.views    import View
 from django.http     import JsonResponse
 
-from .models         import User, ShippingDestination
+from .models         import User
 from .validation     import ValidationError
 from hince.settings  import SECRET_KEY, ALGORITHM
 from user.utils      import login_confirm
@@ -50,25 +50,6 @@ class SignIn(View):
                     access_token = jwt.encode({'USER_ID' : user.id}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
                     return JsonResponse({"ACCESS_TOKEN": access_token}, status = 200)
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)
-
-        except KeyError:
-            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
-
-        except json.decoder.JSONDecodeError:
-            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
-
-class DeliveryAddress(View):
-    @login_confirm
-    def post(self, request):
-        try:
-            data = json.loads(request.body)
-            ShippingDestination(
-                destination_ninkname  = data['destination_ninkname'],
-                name                  = data['address'],
-                phone                 = data['phone'],
-                is_main_destination   = data['set_main_destination'],
-            ).save
-            return JsonResponse({"MESSAGE": "SUCCESS"}, status = 200)
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
