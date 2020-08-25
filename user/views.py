@@ -43,8 +43,8 @@ class SignIn(View):
             if User.objects.filter(account = data['account']).exists():
                 user = User.objects.get(account = data['account'])
                 if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
-                    access_token = jwt.encode({'ID' : user.id}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
-                    return JsonResponse({"TOKEN": access_token}, status = 200)
+                    access_token = jwt.encode({'USER_ID' : user.id}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
+                    return JsonResponse({"ACCESS_TOKEN": access_token}, status = 200)
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)
 
         except KeyError:
@@ -53,18 +53,14 @@ class SignIn(View):
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
-class LoginConfirm:
-    def __init__(self, original_function):
-        self.original_function = original_function
-
-    def __call__(self, request):
-        TOKEN = request.headers.get("Authorization", None)
+def login_confirm(original_function):
+    def wrapper(request):
         try:
+            TOKEN = request.headers.get("Authorization", None)
             if TOKEN:
-                token_payload = jwt.decode(TOKEN, SECRET_KEY['secret'], ALGORITHM['algorithm'])
-                user_id       = User.objects.get(id = token_payload['id'])
-                request.user  = user_id
-                return self.original_function(self, request)
+                token_check     = jwt.decode(TOKEN, SECRET_KEY['secret'], ALGORITHM['algorithm'])
+                request.account = User.objects.get(id = token_check['id'])
+                return original_function(request)
             return JsonResponse({'MESSAGE':'LOGIN_REQUIRED'}, status = 401)
 
         except jwt.ExpiredSignatureError:
@@ -75,3 +71,5 @@ class LoginConfirm:
 
         except User.DoesNotExist:
             return JsonResponse({'MESSAGE':'INVALID_USER'}, status = 401)
+
+    return wrapper
