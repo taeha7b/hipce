@@ -3,7 +3,7 @@ import json
 from django.views import View
 from django.http  import JsonResponse
 
-from .models      import Category, Product
+from .models      import Category, Product, Color
 
 class CategoryView(View):
     def get(self, request):
@@ -26,8 +26,10 @@ class ProductsView(View):
         설명
         - 카테고리를 기준으로 필터해주기 위해 쿼리 스트링 사용
         - 프론트 엔드에 정보만 전달하면 되고 키, 밸류로 값을 사용하기 때문에 values 쿼리셋 사용'''
-        category_name = request.GET.get('category', None)      
+        category_name = request.GET.get('category', None)
+        colors_list   = request.GET.getlist('color', None)
         category_id   = Category.objects.get(name = category_name).id
+        colors = Color.objects.filter('co')
         products      = Product.objects.filter(category = category_id).values(
             'name', 'main_image', 'sub_image', 'price', 'tag'
         )
@@ -51,3 +53,22 @@ class ProductView(View):
             status = 200
         )
 
+class ColorView(View):
+    def get(self, request):
+        colors = Color.objects.values('name')
+        return JsonResponse(
+            {'colors':list(colors)},
+            status = 200
+        )
+
+class ColorFilterView(View):
+    def get(self, request):
+        color_name = request.GET.get('color', None)
+        color      = Color.objects.get(name = color_name)
+        products = color.product_set.values(
+            'name', 'main_image', 'sub_image', 'price', 'tag'
+        )
+        return JsonResponse(
+            {'products':list(products)},
+            status = 200
+        )
