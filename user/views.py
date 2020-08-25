@@ -3,9 +3,10 @@ import bcrypt, json, jwt, re
 from django.views    import View
 from django.http     import JsonResponse
 
-from .models         import User
+from .models         import User, ShippingDestination
 from .validation     import ValidationError
 from hince.settings  import SECRET_KEY, ALGORITHM
+from user.utils      import login_confirm
 
 class SignUp(View):
     def post(self, request):
@@ -32,6 +33,9 @@ class SignUp(View):
             
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+        
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
 class SignIn(View):
     def post(self, request): 
@@ -53,23 +57,21 @@ class SignIn(View):
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
-def login_confirm(original_function):
-    def wrapper(request):
+class DeliveryAddress(View):
+    @login_confirm
+    def post(self, request):
         try:
-            TOKEN = request.headers.get("Authorization", None)
-            if TOKEN:
-                token_check     = jwt.decode(TOKEN, SECRET_KEY['secret'], ALGORITHM['algorithm'])
-                request.account = User.objects.get(id = token_check['id'])
-                return original_function(request)
-            return JsonResponse({'MESSAGE':'LOGIN_REQUIRED'}, status = 401)
+            data = json.loads(request.body)
+            ShippingDestination(
+                destination_ninkname  = data['destination_ninkname'],
+                name                  = data['address'],
+                phone                 = data['phone'],
+                is_main_destination   = data['set_main_destination'],
+            ).save
+            return JsonResponse({"MESSAGE": "SUCCESS"}, status = 200)
 
-        except jwt.ExpiredSignatureError:
-            return JsonResponse({'MESSAGE':'EXPIRED_TOKEN'}, status = 401)
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
 
-        except jwt.DecodeError:
-            return JsonResponse({'MESSAGE':'INVALID_USER'}, status = 401)
-
-        except User.DoesNotExist:
-            return JsonResponse({'MESSAGE':'INVALID_USER'}, status = 401)
-
-    return wrapper
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
