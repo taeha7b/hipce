@@ -1,9 +1,6 @@
 asgiref==3.2.10
-<<<<<<< HEAD
 astroid==2.4.2
-=======
 autopep8 @ file:///tmp/build/80754af9/autopep8_1596578164842/work
->>>>>>> master
 bcrypt==3.2.0
 beautifulsoup4==4.9.1
 bs4==0.0.1
