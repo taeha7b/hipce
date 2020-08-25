@@ -5,26 +5,49 @@ from django.http  import JsonResponse
 
 from .models      import Category, Product
 
-class CategoryShowView(View):
+class CategoryView(View):
     def get(self, request):
         ''' 만든 이: 이태현
         최종 수정: 2020. 08. 25.
         정보: Shop 페이지 카테고리 이름 및 이미지 정보를 보내주는 GET방식 함수
-        설명: 프론트 엔드에 정보만 전달하면 되고 키, 밸류로 값을 사용하기 때문에 values 쿼리셋 사용'''
+        설명
+        - 프론트 엔드에 정보만 전달하면 되고 키, 밸류로 값을 사용하기 때문에 values 쿼리셋 사용'''
         categories = Category.objects.values('name', 'image')
         return JsonResponse(
-            {'category':list(categories)},
+            {'categories':list(categories)},
             status = 200
         )
 
-class ProductShowview(View):
+class ProductsView(View):
     def get(self, request):
         ''' 만든 이: 이태현
         최종 수정: 2020. 08. 25.
-        정보: Shop 페이지 상품 이름, 이미지들, 가격, 태그 이미지를 보내주는 GET방식 함수
-        설명: 프론트 엔드에 정보만 전달하면 되고 키, 밸류로 값을 사용하기 때문에 values 쿼리셋 사용'''
-        products = Product.objects.values('name', 'main_image', 'sub_image', 'price', 'tag')
+        정보: Shop 페이지 카테고리 별 상품 이름 및 이미지 정보를 보내주는 GET방식 함수
+        설명
+        - 카테고리를 기준으로 필터해주기 위해 쿼리 스트링 사용
+        - 프론트 엔드에 정보만 전달하면 되고 키, 밸류로 값을 사용하기 때문에 values 쿼리셋 사용'''
+        category_name = request.GET.get('category', None)      
+        category_id   = Category.objects.get(name = category_name).id
+        products      = Product.objects.filter(category = category_id).values(
+            'name', 'main_image', 'sub_image', 'price', 'tag'
+        )
         return JsonResponse(
-            {'product':list(products)},
+            {'products':list(products)},
             status = 200
         )
+
+class ProductView(View):
+    def get(self, request, id):
+        ''' 만든 이: 이태현
+        최종 수정: 2020. 08. 25.
+        정보: Shop 페이지 각 상품 상세 페이지 정보를 보내주는 GET방식 함수
+        설명
+        - 프론트 엔드에 정보만 전달하면 되고 키, 밸류로 값을 사용하기 때문에 values 쿼리셋 사용'''
+        product = Product.objects.filter(id = id).values(
+            'name', 'main_image', 'description_image', 'price'
+        )
+        return JsonResponse(
+            {'product':list(product)},
+            status = 200
+        )
+
