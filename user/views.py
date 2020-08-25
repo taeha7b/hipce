@@ -5,7 +5,8 @@ from django.http     import JsonResponse
 
 from .models         import User
 from .validation     import ValidationError
-from local_settings  import SECRET, ALGORITHM
+from hince.settings  import SECRET_KEY, ALGORITHM
+from user.utils      import login_confirm
 
 class SignUp(View):
     def post(self, request):
@@ -32,6 +33,9 @@ class SignUp(View):
             
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+        
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
 class SignIn(View):
     def post(self, request): 
@@ -43,8 +47,8 @@ class SignIn(View):
             if User.objects.filter(account = data['account']).exists():
                 user = User.objects.get(account = data['account'])
                 if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
-                    access_token = jwt.encode({'ID' : user.id}, SECRET['secret'], ALGORITHM['algorithm']).decode('utf-8')
-                    return JsonResponse({"TOKEN": access_token}, status = 200)
+                    access_token = jwt.encode({'USER_ID' : user.id}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
+                    return JsonResponse({"ACCESS_TOKEN": access_token}, status = 200)
                 return JsonResponse({"MESSAGE": "INVALID_USER"}, status = 401)
 
         except KeyError:
