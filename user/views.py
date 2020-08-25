@@ -65,13 +65,13 @@ class LoginConfirm:
                 user_id       = User.objects.get(id = token_payload['id'])
                 request.user  = user_id
                 return self.original_function(self, request)
-            return JsonResponse({'MESSAGE':'LOGIN_REQUIRED'}, status=401)
+            return JsonResponse({'MESSAGE':'LOGIN_REQUIRED'}, status = 401)
 
         except jwt.ExpiredSignatureError:
-            return JsonResponse({'MESSAGE':'EXPIRED_TOKEN'}, status=401)
+            return JsonResponse({'MESSAGE':'EXPIRED_TOKEN'}, status = 401)
 
         except jwt.DecodeError:
-            return JsonResponse({'MESSAGE':'INVALID_USER'}, status=401)
+            return JsonResponse({'MESSAGE':'INVALID_USER'}, status = 401)
 
         except User.DoesNotExist:
-            return JsonResponse({'MESSAGE':'INVALID_USER'}, status=401)
+            return JsonResponse({'MESSAGE':'INVALID_USER'}, status = 401)
