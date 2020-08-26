@@ -4,7 +4,7 @@ class Review(models.Model):
     user       = models.ForeignKey('user.User', on_delete = models.CASCADE)
     product    = models.ForeignKey('product.Product', on_delete = models.CASCADE)
     content    = models.CharField(max_length = 500)
-    scroe      = models.CharField(max_length = 50)
+    score      = models.CharField(max_length = 50, default = 0)
     created_at = models.DateTimeField(auto_now_add = True)
 
     class Meta:
@@ -12,12 +12,13 @@ class Review(models.Model):
 
 class ReviewImage(models.Model):
     review = models.ForeignKey('Review', on_delete = models.CASCADE)
-    image  = models.CharField(max_length = 2000)
+    image  = models.CharField(max_length = 2000, default = 0)
 
     class Meta:
         db_table = 'review_images'
 
 class ReviewReputation(models.Model):
+    review  = models.ForeignKey('Review', on_delete = models.CASCADE)
     like    = models.IntegerField(default = 0)
     dislike = models.IntegerField(default = 0)
     total   = models.IntegerField(default = 0)
@@ -32,4 +33,3 @@ class ReviewReply(models.Model):
 
     class Meta:
         db_table = 'review_replies'
-

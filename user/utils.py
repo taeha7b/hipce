@@ -11,7 +11,7 @@ def login_confirm(original_function):
         try:
             access_token = request.headers.get("Authorization")
             if access_token:
-                token_paylod     = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
+                token_paylod    = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
                 request.account = User.objects.get(id = token_paylod['id'])
                 return original_function(request)
             return JsonResponse({'MESSAGE':'LOGIN_REQUIRED'}, status = 401)
