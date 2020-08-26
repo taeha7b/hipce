@@ -23,11 +23,18 @@ class Product(models.Model):
     description_image = models.URLField(max_length = 5000)
     price             = models.DecimalField(max_digits = 20, decimal_places = 4)
     collection        = models.ForeignKey('Collection', on_delete = models.CASCADE, null = True)
-    tag               = models.URLField(max_length = 5000)
+    tag               = models.ForeignKey('Tag', on_delete = models.CASCADE, null = True)
     color             = models.ManyToManyField('Color', through = 'ProductColor')
 
     class Meta:
         db_table = 'products'
+
+class Tag(models.Model):
+    name  = models.CharField(max_length = 50)
+    image = models.URLField(max_length = 5000)
+
+    class Meta:
+        db_table ='tags'
         
 class ProductColor(models.Model):
     product = models.ForeignKey('Product', on_delete = models.CASCADE)
