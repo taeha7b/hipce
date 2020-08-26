@@ -1,14 +1,16 @@
 from pathlib import Path
 
-from local_settings import DATABASES, SECRET
+from local_settings import DATABASES, SECRET_KEY, ALGORITHM
 
-BASE_DIR = Path(__file__).resolve(strict = True).parent.parent
+BASE_DIR    = Path(__file__).resolve(strict = True).parent.parent
 
-DEBUG = True
+DEBUG       = True
 
-SECRET_KEY = SECRET
+SECRET_KEY  = SECRET_KEY
 
-DATABASES = DATABASES
+DATABASES   = DATABASES
+
+ALGORITHM   = ALGORITHM
 
 ALLOWED_HOSTS = ['*']
 
@@ -20,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'store.apps.StoreConfig',
     'user.apps.UserConfig',  
     'product.apps.ProductConfig',
     'reviews.apps.ReviewsConfig',
