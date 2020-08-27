@@ -102,8 +102,6 @@ class ReviewReputation(View):
                 total    = like + dislike
             )
             review_reputation.save()
-
-        except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
         
         except json.decoder.JSONDecodeError:
