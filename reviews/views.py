@@ -108,3 +108,11 @@ class ReviewReputation(View):
         
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
+
+    def get(self, request):
+        try:
+            review_reputation = list(ReviewReputation.objects.values())
+            return JsonResponse({'Review_Reputation':review_reputation}, status = 200)
+        
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
