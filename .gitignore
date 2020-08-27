@@ -245,5 +245,4 @@ tags
 
 crawling/*
 *.csv
-db_save/*
 *_save.py
