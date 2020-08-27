@@ -116,3 +116,55 @@ class ReviewReputation(View):
         
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
+
+class ReviewReply(View):
+    def get(self, request):
+        try:
+            review_reply = list(ReviewReply.objects.values())
+            return JsonResponse({'Review_Reply':review_reply}, status = 200)
+        
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
+
+    @login_confirm
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            review_reply = ReviewReply(
+                user     = request.account,
+                review  = data['review_id'],
+                comment  = data['comment']
+            )
+            review_reply.save()
+            
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+
+    @login_confirm
+    def put(self, request):
+        try:
+            data = json.loads(request.body)
+            user_id = request.account.id
+            comment_id = data['comment_id']
+            modification_review_reply = ReviewReply.objects.get(
+                user = user_id, 
+                id = comment_id
+            )
+            modification_review_reply.comment = data['comment']
+            modification_review_reply.save()
+
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
+        
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
+    
+    @login_confirm
+    def delete(self, request):
+        try:
+            data = json.loads(request.body)
+            ReviewReply.objects.get(id = data['comment_id']).delete()
+            return JsonResponse({"MESSAGE": "ReviewReply was deleted"}, status = 200)
+
+        except KeyError:
+            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
