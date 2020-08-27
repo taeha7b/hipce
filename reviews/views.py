@@ -12,7 +12,7 @@ class Review(View):
     def get(self, request):
         try:
             review = list(ReviewImage.objects.select_related('review').all())
-            return JsonResponse({'Review':review}, status = 200) 
+            return JsonResponse({'Review': review}, status = 200) 
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
