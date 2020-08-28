@@ -13,9 +13,15 @@ class SignUp(View):
         try:
             data = json.loads(request.body)
             regex = re.compile(r'^(?=.*[a-zA-Z0-9])(?=.*[a-zA-Z!@#$%^&*])(?=.*[0-9!@#$%^&*]).{10,16}')
+            if User.objects.filter(account = data['account']):
+                return JsonResponse({"message": "already exist account"}, status=400)
+            
+            if User.objects.filter(email=data['email']):
+                return JsonResponse({"message": "already exist email"}, status=400)
+
             if not regex.match(data['password']):
                 return JsonResponse({"MESSAGE": "RIGHT PASSWORD REQUIRED"}, status = 400)
-            
+
             encode_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
             user = User(
                     account                  = data['account'],

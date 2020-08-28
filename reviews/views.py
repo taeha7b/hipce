@@ -8,31 +8,42 @@ from .models         import Review, ReviewImage, ReviewReply
 from user.models     import User
 from product.models  import Product
 
-class Review(View):
-    def get(self, request):
+class ReviewView(View):
+    def get(self, request, id):
         try:
-            review = list(ReviewImage.objects.select_related('review').all())
-            return JsonResponse({'Review': review}, status = 200) 
+            # data    = json.loads(request.body)
+            reviews = Review.objects.filter(product_id = id).prefetch_related('reviewimage_set')
+            # reviews = Review.objects.filter(product_id = data['product_id']).prefetch_related('reviewimage_set')
+            results = []
+            for review in reviews:
+                image_list = []
+                for images in review.reviewimage_set.all():                
+                    image_list.append(images.image)
+                    results.append({
+                    'user_id'        : review.user_id,
+                    'review_id'      : review.id,
+                    'content'        : review.content,
+                    'product_id'     : review.product_id,
+                    'review_images'  : image_list
+                })
+            return JsonResponse({'Review': results}, status = 200) 
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
     @login_confirm
     def post(self, request):
         try:
-            data = json.loads(request.body)
-            review = Review(
+            data    = json.loads(request.body)
+            review  = Review.objects.create(
                 user     = request.account,
-                product  = Product.objects.get(name = data['name']),
+                product  = Product.objects.get(id = data['product_id']),
                 content  = data['content'],
-                score    = data['score']
+                scroe    = data['score']
             )
-            review.save()
-            
-            review_iamge = ReviewImage(
+            review_iamge = ReviewImage.objects.create(
                 review  = review,
                 image   = data['image']
             )
-            review_iamge.save()
             return JsonResponse({"MESSAGE": "SUCCESS"}, status = 200)
             
         except KeyError:
@@ -41,22 +52,22 @@ class Review(View):
     @login_confirm
     def put(self, request):
         try:
-            data = json.loads(request.body)
-            user_id = request.account.id
-            review_id = data['review_id']
+            data       = json.loads(request.body)
+            user_id    = request.account.id
+            review_id  = data['review_id']
             modification_review = Review.objects.get(
-                user = user_id, 
-                id = review_id
+                user  = user_id,
+                id    = review_id
             )
             modification_review.content = data['content']
             modification_review.save()
 
-            if not data['image'] == '': 
-                review_image_id = data['review_image_id']
+            if data['image']: 
+                review_image_id = ReviewImage.objects.get(id=data['review_image_id'])
 
                 modification_review_image = ReviewImage.objects.get(
-                    review = review_id, 
-                    id = review_image_id
+                    review  = review_id,
+                    id      = review_image_id
                 )
                 modification_review_image = data['image']
                 modification_review_image.save()
@@ -72,54 +83,26 @@ class Review(View):
     def delete(self, request):
         try:
             data = json.loads(request.body)
-            Review.objects.get(id = data['id']).delete()
+            Review.objects.filter(id = int(data['review_id'])).delete()
             return JsonResponse({"MESSAGE": "Review was deleted"}, status = 200)
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
 
-class ReviewReputation(View):
-    @login_confirm
-    def post(self, request):
+class ReviewReplyView(View):
+    def get(self, request, id):
         try:
-            data     = json.loads(request.body)
-            like     = 0
-            dislike  = 0
-            if data['like'] == True:
-                like += 1
-            elif data['like'] == False:
-                like -= 1
-            if data['dislike'] == True:
-                dislike -= 1
-            elif data['dislike'] == False:
-                dislike += 1
+            results = []
+            review_replys = ReviewReply.objects.filter(review_id = id)   
 
-            review_reputation = ReviewReputation(
-                review   = Review.objects.get(user = data['name']),
-                like     = like,
-                dislike  = dislike,
-                total    = like + dislike
-            )
-            review_reputation.save()
-            return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
-        
-        except json.decoder.JSONDecodeError:
-            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
-
-    def get(self, request):
-        try:
-            review_reputation = list(ReviewReputation.objects.values())
-            return JsonResponse({'Review_Reputation':review_reputation}, status = 200)
-        
-        except json.decoder.JSONDecodeError:
-            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
-
-class ReviewReply(View):
-    def get(self, request):
-        try:
-            review_reply = list(ReviewReply.objects.values())
-            return JsonResponse({'Review_Reply':review_reply}, status = 200)
-        
+            for review_reply in review_replys:
+                results.append({
+                    'user_id'          : review_reply.user_id,
+                    'review_reply_id'  : review_reply.id,
+                    'comment'          : review_reply.comment
+                })
+            return JsonResponse({'Review_Reply': results}, status = 200)
+    
         except json.decoder.JSONDecodeError:
             return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 401)
 
@@ -127,25 +110,25 @@ class ReviewReply(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            review_reply = ReviewReply(
+            ReviewReply.objects.create(
                 user     = request.account,
-                review  = data['review_id'],
+                review   = Review.objects.get(id = data['review_id']),
                 comment  = data['comment']
             )
-            review_reply.save()
-            
+            return JsonResponse({"MESSAGE": "SUCCESS"}, status = 200)
+  
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status = 400)
 
     @login_confirm
     def put(self, request):
         try:
-            data = json.loads(request.body)
-            user_id = request.account.id
-            comment_id = data['comment_id']
+            data        = json.loads(request.body)
+            user_id     = request.account.id
+            comment_id  = data['comment_id']
             modification_review_reply = ReviewReply.objects.get(
-                user = user_id, 
-                id = comment_id
+                user  = user_id,
+                id    = comment_id
             )
             modification_review_reply.comment = data['comment']
             modification_review_reply.save()
