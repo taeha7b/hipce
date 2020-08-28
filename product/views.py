@@ -28,11 +28,11 @@ class ProductsView(View):
                 status = 200
             )
 
-        products = products.filter(category__name = category)
-
         if tag:
             products = products.filter(tag__name = tag)
-            return JsonResponse({'products':list(Product.objects.values('name', 'main_image'))}, status = 200)
+            return JsonResponse({'products':list(products.values('name', 'main_image'))}, status = 200)
+        
+        products = products.filter(category__name = category)
 
         if colors:
             products = products.filter(color__name__in = colors)
@@ -45,7 +45,7 @@ class ProductsView(View):
 class ProductView(View):
     def get(self, request, product_id):
         product = Product.objects.filter(id = product_id).values(
-            'name', 'main_image', 'description_image', 'price'
+            'id', 'name', 'main_image', 'description_image', 'price'
         )
         return JsonResponse(
             {'product':list(product)},
