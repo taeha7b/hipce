@@ -54,11 +54,35 @@ class ShoppingList(View):
 
         shoppingbag.total_price = shoppingbag.quantity * shoppingbag.product.price
         shoppingbag.save()
-        return HttpResponse(stauts = 200)
+
+        shoppingbag = list(ShoppingBag.objects.prefetch_related('product').annotate(
+            name    = F('product__name'),
+            price   = F('total_price'),
+            image   = F('product__main_image')
+            ).values('name', 'image', 'quantity', 'price')
+        )
+
+        total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
+        if total_price < 50000: total_price += 2500
+
+        shoppingbag.append(total_price)
+        return JsonResponse({'shoppingbag':shoppingbag}, status = 200)
 
     @login_confirm
     def delete(self, request):
         product = request.DELETE.getlist('product', None)
         if product:
             ShoppingBag.objects.filter(product__id__in = product).delete()
-        return HttpResponse(status = 200)
+        
+        shoppingbag = list(ShoppingBag.objects.prefetch_related('product').annotate(
+            name    = F('product__name'),
+            price   = F('total_price'),
+            image   = F('product__main_image')
+            ).values('name', 'image', 'quantity', 'price')
+        )
+
+        total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
+        if total_price < 50000: total_price += 2500
+
+        shoppingbag.append(total_price)
+        return JsonResponse({'shoppingbag':shoppingbag}, status = 200)
