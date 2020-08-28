@@ -11,10 +11,11 @@ from user.utils       import login_confirm
 
 class ShoppingList(View):
     @login_confirm
-    def post(self, request, product_id: int):
+    def post(self, request):
+        product        = request.POST.get('product_id', None)
         shoppingbag, _ = ShoppingBag.objects.prefetch_related('product').get_or_create(
             user       = request.account,
-            product    = Product.objects.get(id = product_id)
+            product    = Product.objects.get(id = product)
         )
         shoppingbag.quantity    += 1
         shoppingbag.total_price  = shoppingbag.quantity * shoppingbag.product.price
@@ -22,16 +23,17 @@ class ShoppingList(View):
 
     @login_confirm
     def get(self, request):
-        product     = dict(reqeust.GET.items())
-        shoppingbag = list(ShoppingBag.objects.prefetch_related('product').filter(**product).annotate(
+        products     = reqeust.GET.getlist('product_id', None)
+
+        shoppingbag = ShoppingBag.objects.prefetch_related('product').annotate(
             name    = F('product__name'),
             price   = F('total_price'),
-            image   = F('product__main_image')).values(
-                'name', 'image', 'quantity', 'price'
-            )
+            image   = F('product__main_image')
         )
-        total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
+        if products: shoppingbag = shoppingbag.filter(product__id__in = products)
+        shoppingbag = list(shoppingbag.values('name', 'image', 'quantity', 'price'))
 
+        total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
         if total_price < 50000: total_price += 2500
 
         shoppingbag.append(total_price)

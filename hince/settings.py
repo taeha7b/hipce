@@ -23,9 +23,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'store.apps.StoreConfig',
-    'user.apps.UserConfig',  
     'product.apps.ProductConfig',
     'reviews.apps.ReviewsConfig',
+    'user.apps.UserConfig',
+    'order.apps.OrderConfig',
 ]
 
 MIDDLEWARE = [
@@ -111,7 +112,7 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
-
+'''
 LOGGING = {
     'disable_existing_loggers': False,
     'version': 1,
@@ -142,3 +143,4 @@ LOGGING = {
         },
     },
 }
+'''
