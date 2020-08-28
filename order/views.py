@@ -12,7 +12,8 @@ from user.utils       import login_confirm
 class ShoppingList(View):
     @login_confirm
     def post(self, request):
-        product        = request.POST.get('product_id', None)
+        data           = json.loads(request.body)
+        product        = data['product_id']
         shoppingbag, _ = ShoppingBag.objects.prefetch_related('product').get_or_create(
             user       = request.account,
             product    = Product.objects.get(id = product)
@@ -41,12 +42,13 @@ class ShoppingList(View):
 
     @login_confirm
     def patch(self, request):
-        product     = request.UPDATE.get('product_id', None)
-        is_added    = request.UPDATE.get('is_added', None)
-        shoppingbag = ShoppingBag.objects.get(product__id = product)
+        product      = request.UPDATE.get('product_id', None)
+        is_increased = request.UPDATE.get('is_increased', None)
+        is_decreased = request.UPDATE.get('is_decreased', None) 
+        shoppingbag  = ShoppingBag.objects.get(product__id = product)
 
-        if is_added: shoppingbag.quantity += 1
-        else: shoppingbag.quantity        -= 1
+        if is_increased: shoppingbag.quantity += 1
+        if is_decreased: shoppingbag.quantity -= 1
 
         if shoppingbag.quantity == 0: shoppingbag.delete()
 
@@ -56,8 +58,7 @@ class ShoppingList(View):
 
     @login_confirm
     def delete(self, request):
-        product     = dict(request.DELETE.items())
-        shoppingbag = ShoppingBag.objects.filter(**product)
-
-        if product: shoppingbag.delete()
+        product = request.DELETE.getlist('product', None)
+        if product:
+            ShoppingBag.objects.filter(product__id__in = product).delete()
         return HttpResponse(status = 200)
