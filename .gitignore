@@ -244,5 +244,4 @@ tags
 # End of https://www.toptal.com/developers/gitignore/api/django,python,visualstudiocode,vim
 
 crawling/*
-*.csv
-*_save.py
+db_save/*
