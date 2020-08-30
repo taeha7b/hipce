@@ -33,7 +33,7 @@ class ShoppingList(View):
             image   = F('product__main_image')
         )
         if products: shoppingbag = shoppingbag.filter(product__id__in = products)
-        shoppingbag = list(shoppingbag.values('name', 'image', 'quantity', 'price'))
+        shoppingbag = list(shoppingbag.values('id', 'name', 'image', 'quantity', 'price'))
 
         total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
         if total_price['total_price'] < 50000: total_price['total_price'] += 2500
