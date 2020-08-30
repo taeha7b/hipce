@@ -24,13 +24,13 @@ class ProductsView(View):
         if keyword:
             products = products.filter(name__icontains = keyword)
             return JsonResponse(
-                {'products':list(products.values('name', 'main_image', 'sub_image', 'price', 'tag__image'))},
+                {'products':list(products.values('id', 'name', 'main_image', 'sub_image', 'price', 'tag__image'))},
                 status = 200
             )
 
         if tag:
             products = products.filter(tag__name = tag)
-            return JsonResponse({'products':list(products.values('name', 'main_image'))}, status = 200)
+            return JsonResponse({'products':list(products.values('id', 'name', 'main_image'))}, status = 200)
         
         products = products.filter(category__name = category)
 
@@ -38,7 +38,7 @@ class ProductsView(View):
             products = products.filter(color__name__in = colors)
 
         return JsonResponse(
-            {'products':list(products.values('name', 'main_image', 'sub_image', 'price', 'tag__image'))},
+            {'products':list(products.values('id', 'name', 'main_image', 'sub_image', 'price', 'tag__image'))},
             status = 200
         )
 
