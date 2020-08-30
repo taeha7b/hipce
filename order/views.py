@@ -20,11 +20,12 @@ class ShoppingList(View):
         )
         shoppingbag.quantity    += 1
         shoppingbag.total_price  = shoppingbag.quantity * shoppingbag.product.price
-        return HttpResponse(status = 200)
+        shoppingbag.save()
+        return JsonResponse({"message":"success"}, status = 200)
 
     @login_confirm
     def get(self, request):
-        products     = reqeust.GET.getlist('product_id', None)
+        products     = request.GET.getlist('product_id', None)
 
         shoppingbag = ShoppingBag.objects.prefetch_related('product').annotate(
             name    = F('product__name'),
@@ -35,7 +36,7 @@ class ShoppingList(View):
         shoppingbag = list(shoppingbag.values('name', 'image', 'quantity', 'price'))
 
         total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
-        if total_price < 50000: total_price += 2500
+        if total_price['total_price'] < 50000: total_price['total_price'] += 2500
 
         shoppingbag.append(total_price)
         return JsonResponse({'shoppingbag':shoppingbag}, status = 200)
@@ -63,7 +64,7 @@ class ShoppingList(View):
         )
 
         total_price = ShoppingBag.objects.aggregate(total_price = Sum('total_price'))
-        if total_price < 50000: total_price += 2500
+        if total_price['total_price'] < 50000: total_price['total_price'] += 2500
 
         shoppingbag.append(total_price)
         return JsonResponse({'shoppingbag':shoppingbag}, status = 200)

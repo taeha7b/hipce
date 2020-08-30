@@ -9,7 +9,7 @@ from hince.settings  import SECRET_KEY, ALGORITHM
 def login_confirm(original_function):
     def wrapper(self, request):
         try:
-            access_token = request.headers.get("Authorization")
+            access_token = request.headers.get("Authorization", None)
             if access_token:
                 token_paylod    = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
                 request.account = User.objects.get(id = token_paylod['USER_ID'])

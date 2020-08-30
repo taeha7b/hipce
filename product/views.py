@@ -2,6 +2,7 @@ import json
 
 from django.views     import View
 from django.http      import JsonResponse
+from django.db.models import Q
 
 from .models          import Category, Product, Color, Collection
 
