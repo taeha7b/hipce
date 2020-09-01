@@ -112,7 +112,7 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
-'''
+
 LOGGING = {
     'disable_existing_loggers': False,
     'version': 1,
@@ -143,4 +143,3 @@ LOGGING = {
         },
     },
 }
-'''
